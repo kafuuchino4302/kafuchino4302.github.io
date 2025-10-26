@@ -15,7 +15,7 @@ const GITHUB_REPO = 'kafuchino4302.github.io';
 const MUSIC_JSON_PATH = 'music.json';
 const MUSIC_FOLDER = 'music/';
 // 使用 jsdelivr CDN 加速访问，并自动处理缓存
-const RAW_JSON_URL = 'https://cdn.jsdelivr.net/gh/kafuuchino4302/kafuchino4302.github.io@main/music.json';
+const RAW_JSON_URL = 'music.json';
 
 // GitHub Personal Access Token（分割法）
 const TOKEN_PART1 = 'ghp_pOaD2xShfdDnW6g2'; // 替换为 Token 的前半部分
@@ -560,3 +560,4 @@ closeQueueBtn.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
     loadMusicLibrary();
 });
+
