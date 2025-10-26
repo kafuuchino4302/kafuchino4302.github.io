@@ -52,7 +52,7 @@ const currentTitle = document.getElementById('current-title');
 const currentArtist = document.getElementById('current-artist');
 const queueBtn = document.getElementById('queue');
 
-// --- 导航切换逻辑 (修复导航点击问题) ---
+// --- 导航切换逻辑 ---
 const navLinks = document.querySelectorAll('.nav-menu a');
 const sections = document.querySelectorAll('.main-container .section');
 
@@ -74,17 +74,15 @@ navLinks.forEach(link => {
 
 // --- 核心功能 ---
 
-// 加载音乐库（仅在启动时加载一次）
+// 加载音乐库
 async function loadMusicLibrary() {
     try {
-        // 添加时间戳防止 CDN 缓存
         const response = await fetch(RAW_JSON_URL + '?t=' + new Date().getTime());
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         let data = await response.json();
         
-        // 关键修复：处理可能存在的嵌套数组问题
         if (Array.isArray(data) && Array.isArray(data[0])) {
             musicDatabase = data[0];
         } else {
@@ -92,7 +90,7 @@ async function loadMusicLibrary() {
         }
 
         displayMusic(musicDatabase);
-        displayRecentUploads(musicDatabase.slice(0, 5)); // 显示最近5首
+        displayRecentUploads(musicDatabase.slice(0, 5));
     } catch (error) {
         console.error('加载音乐库失败:', error);
         musicLibrary.innerHTML = '<p>加载音乐库失败，请检查网络或联系管理员。</p>';
@@ -105,7 +103,6 @@ function displayMusic(musicData) {
     musicData.forEach((song, index) => {
         const musicCard = document.createElement('div');
         musicCard.classList.add('music-card');
-        // 使用 song.id 作为索引，这样即使列表排序了也能找到正确的歌曲
         musicCard.dataset.songId = song.id; 
         musicCard.innerHTML = `
             <div class="music-card-info">
@@ -126,10 +123,8 @@ function displayMusic(musicData) {
 musicLibrary.addEventListener('click', e => {
     const card = e.target.closest('.music-card');
     if (!card) return;
-
     const songId = card.dataset.songId;
     const songIndex = musicDatabase.findIndex(song => song.id === songId);
-
     if (songIndex === -1) return;
 
     if (e.target.closest('.play-song-btn')) {
@@ -142,7 +137,7 @@ musicLibrary.addEventListener('click', e => {
 // 显示最近上传
 function displayRecentUploads(musicData) {
     recentUploads.innerHTML = '';
-     musicData.forEach((song) => { // 不需要 index
+     musicData.forEach((song) => {
         const songIndex = musicDatabase.findIndex(s => s.id === song.id);
         if (songIndex === -1) return;
 
@@ -163,13 +158,11 @@ function displayRecentUploads(musicData) {
     });
 }
 
-// 从已加载的 musicDatabase 播放音乐
+// 从音乐库播放音乐
 function playSongFromDatabase(index) {
-    // 将整个音乐库设置为当前播放列表
     currentPlaylist = [...musicDatabase]; 
     currentIndex = index;
     const song = currentPlaylist[currentIndex];
-    
     audio.src = song.url;
     audio.play();
     isPlaying = true;
@@ -187,7 +180,6 @@ function updatePlayerInfo(song) {
 // 添加到播放队列
 function addToQueue(index) {
     const songToAdd = musicDatabase[index];
-    // 避免重复添加
     if (!currentPlaylist.find(song => song.id === songToAdd.id)) {
         currentPlaylist.push(songToAdd);
         updateQueueDisplay();
@@ -234,33 +226,26 @@ function playSongFromQueue() {
     updateQueueDisplay();
 }
 
-
 // 从播放队列移除
 function removeFromQueue(index) {
     currentPlaylist.splice(index, 1);
     if (index < currentIndex) {
         currentIndex--;
     } else if (index === currentIndex) {
-        // 如果移除的是当前播放的歌曲，则停止播放
         audio.pause();
         audio.src = '';
         isPlaying = false;
         playBtn.querySelector('i').classList.replace('fa-pause', 'fa-play');
-        // 可选择播放下一首
-        // playNext(); 
     }
     updateQueueDisplay();
 }
 
 // 播放器控制
 playBtn.addEventListener('click', () => {
-    if (!audio.src) { // 如果没有歌曲，不执行任何操作
-        if (currentPlaylist.length > 0) {
-            playSongFromQueue();
-        }
+    if (!audio.src) {
+        if (currentPlaylist.length > 0) playSongFromQueue();
         return;
     }
-
     if (isPlaying) {
         audio.pause();
         isPlaying = false;
@@ -272,19 +257,16 @@ playBtn.addEventListener('click', () => {
     }
 });
 
-
 function playNext() {
     if (isShuffle) {
         currentIndex = Math.floor(Math.random() * currentPlaylist.length);
     } else {
         currentIndex++;
     }
-
     if (currentIndex >= currentPlaylist.length) {
         if (isRepeat) {
             currentIndex = 0;
         } else {
-            // 播放完毕
             isPlaying = false;
             playBtn.querySelector('i').classList.replace('fa-pause', 'fa-play');
             return;
@@ -303,22 +285,15 @@ function playPrev() {
 
 prevBtn.addEventListener('click', playPrev);
 nextBtn.addEventListener('click', playNext);
-
-
 shuffleBtn.addEventListener('click', () => {
     isShuffle = !isShuffle;
     shuffleBtn.style.color = isShuffle ? 'var(--primary-color)' : 'var(--text-primary)';
 });
-
 repeatBtn.addEventListener('click', () => {
     isRepeat = !isRepeat;
     repeatBtn.style.color = isRepeat ? 'var(--primary-color)' : 'var(--text-primary)';
 });
-
-audio.addEventListener('ended', () => {
-    playNext();
-});
-
+audio.addEventListener('ended', playNext);
 audio.addEventListener('timeupdate', () => {
     if (isNaN(audio.duration)) return;
     const current = audio.currentTime;
@@ -327,14 +302,12 @@ audio.addEventListener('timeupdate', () => {
     duration.textContent = formatTime(dur);
     progress.style.width = `${(current / dur) * 100}%`;
 });
-
 progressBar.addEventListener('click', (e) => {
     if (isNaN(audio.duration)) return;
     const rect = progressBar.getBoundingClientRect();
     const pos = (e.clientX - rect.left) / rect.width;
     audio.currentTime = pos * audio.duration;
 });
-
 volume.addEventListener('input', () => {
     audio.volume = volume.value / 100;
 });
@@ -348,32 +321,16 @@ function formatTime(seconds) {
 
 // --- 上传逻辑 ---
 
-// 上传区域拖拽事件
-dropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropZone.classList.add('dragover');
-});
-
-dropZone.addEventListener('dragleave', () => {
-    dropZone.classList.remove('dragover');
-});
-
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
 dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     dropZone.classList.remove('dragover');
-    const files = e.dataTransfer.files;
-    handleFiles(files);
+    handleFiles(e.dataTransfer.files);
 });
+dropZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => handleFiles(fileInput.files));
 
-dropZone.addEventListener('click', () => {
-    fileInput.click();
-});
-
-fileInput.addEventListener('change', () => {
-    handleFiles(fileInput.files);
-});
-
-// 处理上传文件
 let currentFile = null;
 function handleFiles(files) {
     for (const file of files) {
@@ -384,7 +341,6 @@ function handleFiles(files) {
     }
 }
 
-// 显示音乐信息编辑对话框
 function showEditDialog(file) {
     editTitle.value = file.name.replace(/\.[^/.]+$/, '');
     editOriginal.value = '未知';
@@ -398,7 +354,6 @@ function showEditDialog(file) {
     musicEditDialog.classList.add('active');
 }
 
-// 添加歌手输入框
 singersContainer.addEventListener('click', (e) => {
     const addBtn = e.target.closest('.add-singer-btn');
     if (addBtn) {
@@ -413,23 +368,17 @@ singersContainer.addEventListener('click', (e) => {
         singerGroup.querySelector('label').style.display = 'none'; 
         singersContainer.appendChild(singerGroup);
     }
-});
-
-// 移除歌手输入框
-singersContainer.addEventListener('click', (e) => {
     const removeBtn = e.target.closest('.remove-singer-btn');
     if (removeBtn) {
         removeBtn.closest('.form-group').remove();
     }
 });
-
-// 取消编辑
 cancelEditBtn.addEventListener('click', () => {
     musicEditDialog.classList.remove('active');
     currentFile = null;
 });
 
-// 保存并上传 (已包含乱码修复和ID/文件名跟随标题的修改)
+// 保存并上传 (最终版本)
 saveEditBtn.addEventListener('click', async () => {
     const title = editTitle.value.trim();
     const original = editOriginal.value.trim();
@@ -441,51 +390,39 @@ saveEditBtn.addEventListener('click', async () => {
         alert('请填写歌曲名称和至少一位歌手！');
         return;
     }
-
     if (!GITHUB_TOKEN) {
         alert('GitHub Token 未配置！');
         return;
     }
 
     musicEditDialog.classList.remove('active');
-
     const uploadItem = document.createElement('div');
     uploadItem.classList.add('upload-item');
-    uploadItem.innerHTML = `
-        <span>${title}</span>
-        <div class="upload-progress">
-            <div class="upload-progress-bar" style="width: 0%"></div>
-        </div>
-    `;
+    uploadItem.innerHTML = `<span>${title}</span><div class="upload-progress"><div class="upload-progress-bar" style="width: 0%"></div></div>`;
     uploadList.appendChild(uploadItem);
 
     try {
-        // 1. 上传音乐文件
         const progressBar = uploadItem.querySelector('.upload-progress-bar');
         const fileContent = await readFileAsBase64(currentFile);
 
-        // --- 根据标题创建新文件名 ---
         const lastDotIndex = currentFile.name.lastIndexOf('.');
         const extension = lastDotIndex > 0 ? currentFile.name.substring(lastDotIndex) : '.mp3';
-        const sanitizedTitle = title.replace(/[\\/:*?"<>|]/g, '_');
+        const sanitizedTitle = title.replace(/[\\/:*?"<>|#%]/g, '_');
         const newFileName = `${sanitizedTitle}${extension}`;
-        const filePath = `${MUSIC_FOLDER}${encodeURIComponent(newFileName)}`;
+        const filePath = `${MUSIC_FOLDER}${newFileName}`;
         
         await uploadFileToGitHub(filePath, fileContent);
         progressBar.style.width = '50%';
 
-        // 2. 更新 music.json
         const { content, sha } = await getMusicJsonContent();
-        
-        // --- 修复乱码的关键：使用正确的方式解码 base64 内容 ---
         const musicJson = JSON.parse(decodeURIComponent(escape(atob(content))));
 
         const newSong = {
-            id: newFileName, // 使用新文件名作为 ID
-            title: title,    // 保持原始标题不变
+            id: newFileName,
+            title: title,
             singers: singers,
             original: original,
-            url: filePath    // url 指向新的文件路径
+            url: filePath
         };
         
         const targetArray = Array.isArray(musicJson[0]) ? musicJson[0] : musicJson;
@@ -495,7 +432,6 @@ saveEditBtn.addEventListener('click', async () => {
         
         progressBar.style.width = '100%';
         uploadItem.classList.add('success');
-        
         loadMusicLibrary(); 
     } catch (error) {
         console.error('上传失败:', error);
@@ -506,6 +442,7 @@ saveEditBtn.addEventListener('click', async () => {
     }
 });
 
+// --- GitHub API 助手函数 ---
 
 function readFileAsBase64(file) {
     return new Promise((resolve, reject) => {
@@ -545,9 +482,7 @@ async function getMusicJsonContent() {
             'Accept': 'application/vnd.github.v3+json',
         }
     });
-    if (!response.ok) {
-        throw new Error('获取 music.json 失败');
-    }
+    if (!response.ok) throw new Error('获取 music.json 失败');
     const data = await response.json();
     return { content: data.content, sha: data.sha };
 }
@@ -573,15 +508,9 @@ async function updateMusicJson(musicJson, sha) {
     }
 }
 
-
-// --- 队列侧边栏控制 ---
-queueBtn.addEventListener('click', () => {
-    queueSidebar.classList.toggle('active');
-});
-
-closeQueueBtn.addEventListener('click', () => {
-    queueSidebar.classList.remove('active');
-});
+// --- UI 控制 ---
+queueBtn.addEventListener('click', () => queueSidebar.classList.toggle('active'));
+closeQueueBtn.addEventListener('click', () => queueSidebar.classList.remove('active'));
 
 // --- 初始化 ---
 document.addEventListener('DOMContentLoaded', () => {
