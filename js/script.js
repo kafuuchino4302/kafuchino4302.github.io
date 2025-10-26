@@ -52,7 +52,7 @@ const currentTitle = document.getElementById('current-title');
 const currentArtist = document.getElementById('current-artist');
 const queueBtn = document.getElementById('queue');
 
-// --- 导航切换逻辑 (新增) ---
+// --- 导航切换逻辑 (修复导航点击问题) ---
 const navLinks = document.querySelectorAll('.nav-menu a');
 const sections = document.querySelectorAll('.main-container .section');
 
@@ -346,7 +346,8 @@ function formatTime(seconds) {
     return `${min}:${sec < 10 ? '0' : ''}${sec}`;
 }
 
-// ... [保留您原来的上传相关函数，它们是正确的] ...
+// --- 上传逻辑 ---
+
 // 上传区域拖拽事件
 dropZone.addEventListener('dragover', (e) => {
     e.preventDefault();
@@ -409,7 +410,6 @@ singersContainer.addEventListener('click', (e) => {
             <input type="text" id="edit-singer-${singerCount}" class="singer-input" placeholder="输入歌手名称">
             <button type="button" class="remove-singer-btn"><i class="fas fa-minus"></i></button>
         `;
-        // 动态添加的元素需要移除label，或者设为 screen-reader-only
         singerGroup.querySelector('label').style.display = 'none'; 
         singersContainer.appendChild(singerGroup);
     }
@@ -429,7 +429,7 @@ cancelEditBtn.addEventListener('click', () => {
     currentFile = null;
 });
 
-// 保存并上传
+// 保存并上传 (已包含乱码修复和ID/文件名跟随标题的修改)
 saveEditBtn.addEventListener('click', async () => {
     const title = editTitle.value.trim();
     const original = editOriginal.value.trim();
@@ -447,7 +447,7 @@ saveEditBtn.addEventListener('click', async () => {
         return;
     }
 
-    musicEditDialog.classList.remove('active'); // 先关闭对话框
+    musicEditDialog.classList.remove('active');
 
     const uploadItem = document.createElement('div');
     uploadItem.classList.add('upload-item');
@@ -463,32 +463,39 @@ saveEditBtn.addEventListener('click', async () => {
         // 1. 上传音乐文件
         const progressBar = uploadItem.querySelector('.upload-progress-bar');
         const fileContent = await readFileAsBase64(currentFile);
-        const fileName = `${Date.now()}-${currentFile.name}`; // 添加时间戳避免重名
-        const filePath = `${MUSIC_FOLDER}${encodeURIComponent(fileName)}`;
+
+        // --- 根据标题创建新文件名 ---
+        const lastDotIndex = currentFile.name.lastIndexOf('.');
+        const extension = lastDotIndex > 0 ? currentFile.name.substring(lastDotIndex) : '.mp3';
+        const sanitizedTitle = title.replace(/[\\/:*?"<>|]/g, '_');
+        const newFileName = `${sanitizedTitle}${extension}`;
+        const filePath = `${MUSIC_FOLDER}${encodeURIComponent(newFileName)}`;
+        
         await uploadFileToGitHub(filePath, fileContent);
         progressBar.style.width = '50%';
 
         // 2. 更新 music.json
         const { content, sha } = await getMusicJsonContent();
+        
+        // --- 修复乱码的关键：使用正确的方式解码 base64 内容 ---
         const musicJson = JSON.parse(decodeURIComponent(escape(atob(content))));
 
         const newSong = {
-            id: fileName, // 使用带时间戳的文件名作为唯一ID
-            title: title,
+            id: newFileName, // 使用新文件名作为 ID
+            title: title,    // 保持原始标题不变
             singers: singers,
             original: original,
-            url: filePath
+            url: filePath    // url 指向新的文件路径
         };
-        // 修复：确保 musicJson 是一个单层数组
+        
         const targetArray = Array.isArray(musicJson[0]) ? musicJson[0] : musicJson;
-        targetArray.unshift(newSong); // 将新歌添加到最前面
+        targetArray.unshift(newSong);
 
         await updateMusicJson(Array.isArray(musicJson[0]) ? [targetArray] : targetArray, sha);
         
         progressBar.style.width = '100%';
         uploadItem.classList.add('success');
         
-        // 刷新音乐库
         loadMusicLibrary(); 
     } catch (error) {
         console.error('上传失败:', error);
@@ -567,7 +574,7 @@ async function updateMusicJson(musicJson, sha) {
 }
 
 
-// 队列侧边栏控制
+// --- 队列侧边栏控制 ---
 queueBtn.addEventListener('click', () => {
     queueSidebar.classList.toggle('active');
 });
@@ -576,8 +583,7 @@ closeQueueBtn.addEventListener('click', () => {
     queueSidebar.classList.remove('active');
 });
 
-// 初始化
+// --- 初始化 ---
 document.addEventListener('DOMContentLoaded', () => {
     loadMusicLibrary();
 });
-
