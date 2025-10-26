@@ -721,3 +721,19 @@ h2 {
     .now-playing, .player-options { display: none; }
     .queue-sidebar { width: 100%; right: -100%; }
 }
+
+.modal-list-header {
+    font-weight: bold;
+    color: var(--text-secondary);
+    padding: 0.8rem 1rem 0.2rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--hover-bg);
+    cursor: default !important;
+    background-color: transparent !important;
+}
+
+.modal-list-header:first-child {
+    margin-top: 0;
+}
