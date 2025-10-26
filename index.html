@@ -21,6 +21,7 @@
             <a href="#library"><i class="fas fa-folder"></i> 音乐库</a>
             <a href="#upload"><i class="fas fa-upload"></i> 上传</a>
             <a href="#playlists"><i class="fas fa-list"></i> 播放列表</a>
+            <a href="#songlists"><i class="fas fa-users"></i> 歌单</a>
         </div>
     </nav>
 
@@ -120,6 +121,18 @@
             </div>
         </section>
 
+        <section id="songlists" class="section">
+            <div class="playlists-header">
+                <h2>公共歌单</h2>
+                <button id="create-songlist-btn" class="btn-primary">
+                    <i class="fas fa-plus"></i> 新建歌单
+                </button>
+            </div>
+            <div class="playlists-grid" id="songlists-container">
+                <!-- 公共歌单将在这里动态显示 -->
+            </div>
+        </section>
+
         <!-- 新增: 播放列表详情页 -->
         <section id="playlist-detail" class="section">
             <div class="playlist-detail-header">
@@ -129,6 +142,17 @@
             </div>
             <div class="playlist-song-list" id="playlist-song-list-container">
                 <!-- 播放列表中的歌曲将在这里显示 -->
+            </div>
+        </section>
+
+        <section id="songlist-detail" class="section">
+            <div class="playlist-detail-header">
+                <button id="back-to-songlists-btn" class="back-btn"><i class="fas fa-arrow-left"></i> 返回</button>
+                <h2 id="songlist-detail-name">歌单名称</h2>
+                <button id="play-all-in-songlist-detail-btn" class="btn-primary"><i class="fas fa-play"></i> 播放全部</button>
+            </div>
+            <div class="playlist-song-list" id="songlist-song-list-container">
+                <!-- 歌单中的歌曲将在这里显示 -->
             </div>
         </section>
     </div>
@@ -175,12 +199,11 @@
         </ul>
     </div>
 
-    <!-- 新增: 添加到播放列表的模态框 -->
     <div class="modal-overlay" id="add-to-playlist-modal">
         <div class="modal-content">
-            <h3>添加到播放列表</h3>
+            <h3>添加到...</h3>
             <ul class="modal-playlist-list" id="modal-playlist-list">
-                <!-- 可用的播放列表将在这里显示 -->
+                <!-- 列表将由JS动态填充 -->
             </ul>
             <div class="modal-actions">
                 <button id="close-modal-btn" class="btn-secondary">关闭</button>
