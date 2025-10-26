@@ -12,8 +12,8 @@ class MusicPlayer {
         // 初始化GitHub API
         this.github = new GitHubAPI(
             'kafuuchino4302',  // 替换为你的GitHub用户名
-            'ayaya.github.io',        // 替换为你的仓库名
-            'YourGitHubToken'      // 替换为你的GitHub Token
+            'kafuchino4302.github.io',        // 替换为你的仓库名
+            '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'      // 替换为你的GitHub Token
         );
 
         // 添加对话框相关元素
@@ -608,4 +608,5 @@ class GitHubAPI {
 let player;
 document.addEventListener('DOMContentLoaded', () => {
     player = new MusicPlayer();
+
 });
