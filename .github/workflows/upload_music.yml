@@ -1,0 +1,72 @@
+name: Upload Music and Update Library
+
+on:
+  repository_dispatch:
+    types: [upload-music]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    # 将 client_payload 的值设置为环境变量，方便后续步骤使用
+    env:
+      FILENAME: ${{ github.event.client_payload.filename }}
+      FILE_CONTENT_BASE64: ${{ github.event.client_payload.content }}
+      TITLE: ${{ github.event.client_payload.title }}
+      SINGERS_JSON: ${{ toJSON(github.event.client_payload.singers) }}
+      ORIGINAL: ${{ github.event.client_payload.original }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # 使用拥有完整写权限的 PAT
+          token: ${{ secrets.ACTIONS_PAT }}
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Decode and write music file
+        run: |
+          echo "Writing to file: uploads/music/${FILENAME}"
+          mkdir -p uploads/music
+          echo "${FILE_CONTENT_BASE64}" | base64 --decode > "uploads/music/${FILENAME}"
+
+      - name: Update library.json
+        run: |
+          echo "Updating library.json with new song: ${TITLE}"
+          
+          # 创建新的歌曲条目 JSON 对象
+          # 使用 jq --argjson 可以安全地处理包含特殊字符的字符串和JSON数组
+          NEW_SONG_ENTRY=$(jq -n \
+            --argjson id "$(date +%s%3N)" \
+            --arg title "$TITLE" \
+            --argjson singers "$SINGERS_JSON" \
+            --arg original "$ORIGINAL" \
+            --arg file "$FILENAME" \
+            '{id: $id | tonumber, title: $title, singers: $singers, original: $original, file: $file}')
+
+          # 如果 library.json 不存在或为空，则创建一个新数组；否则在现有数组后追加
+          jq "(. // []) + [$NEW_SONG_ENTRY]" library.json > library.json.tmp && mv library.json.tmp library.json
+          
+          echo "Updated library.json content:"
+          cat library.json
+
+      - name: Commit and push changes
+        run: |
+          # 配置 git 用户信息，否则 commit 会失败
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          git add "uploads/music/${FILENAME}" library.json
+          
+          # 检查是否有文件变动，只有在有变动时才提交
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "feat: Add new music '${TITLE}' via Actions"
+            git push
+            echo "Changes committed and pushed."
+          else
+            echo "No changes to commit."
+          fi
