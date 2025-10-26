@@ -499,7 +499,7 @@ async function uploadFile(file, musicInfo) {
                 title: musicInfo.title,
                 singers: musicInfo.singers,
                 original: musicInfo.original,
-                url: data.content.download_url
+                url: filePath
             };
 
             await updateMusicJson(newSong);
@@ -935,3 +935,4 @@ document.addEventListener('DOMContentLoaded', () => {
     displayPlaylists();
     loadPublicSonglists();
 });
+
