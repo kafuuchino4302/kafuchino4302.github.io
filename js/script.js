@@ -52,6 +52,26 @@ const currentTitle = document.getElementById('current-title');
 const currentArtist = document.getElementById('current-artist');
 const queueBtn = document.getElementById('queue');
 
+// --- 导航切换逻辑 (新增) ---
+const navLinks = document.querySelectorAll('.nav-menu a');
+const sections = document.querySelectorAll('.main-container .section');
+
+navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').substring(1);
+        const targetSection = document.getElementById(targetId);
+
+        if (targetSection) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            sections.forEach(s => s.classList.remove('active'));
+            targetSection.classList.add('active');
+        }
+    });
+});
+
+
 // --- 核心功能 ---
 
 // 加载音乐库（仅在启动时加载一次）
@@ -560,5 +580,3 @@ closeQueueBtn.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
     loadMusicLibrary();
 });
-
-
