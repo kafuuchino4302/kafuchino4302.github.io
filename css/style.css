@@ -32,8 +32,7 @@
     flex: 1;
 }
 
-.add-singer-btn {
-    background: var(--primary-color);
+.add-singer-btn, .remove-singer-btn {
     border: none;
     border-radius: 50%;
     width: 24px;
@@ -44,6 +43,11 @@
     color: white;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.add-singer-btn {
+    background: var(--primary-color);
 }
 
 .add-singer-btn:hover {
@@ -53,16 +57,6 @@
 
 .remove-singer-btn {
     background: #ff4444;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
 }
 
 .remove-singer-btn:hover {
@@ -146,7 +140,7 @@ body {
 
 /* 主容器样式 */
 .main-container {
-    margin-top: 70px;
+    margin-top: 84px; /* 增加上边距 */
     margin-bottom: 100px;
     padding: 2rem;
     flex: 1;
@@ -180,6 +174,9 @@ body {
     overflow: hidden;
     box-shadow: 0 6px 18px var(--shadow-color);
     border: 1px solid rgba(255,200,220,0.25);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .music-card:hover {
@@ -191,21 +188,20 @@ body {
 }
 
 .music-card-info {
-    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+.music-card-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
 }
 
 .music-card-controls {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 0.8rem;
-    background: linear-gradient(transparent, rgba(255,200,220,0.12));
-    opacity: 0;
-    transition: opacity 0.25s ease;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    padding-top: 0.5rem;
 }
 
 /* 上传区域样式 */
@@ -250,6 +246,7 @@ body {
     align-items: center;
     gap: 1rem;
     z-index: 1000;
+    box-shadow: 0 -4px 20px var(--shadow-color);
 }
 
 .now-playing {
@@ -293,6 +290,7 @@ body {
 
 .control-btn:hover {
     transform: scale(1.1);
+    background-color: var(--hover-bg);
 }
 
 .control-btn.primary {
@@ -302,6 +300,10 @@ body {
     color: white;
     box-shadow: 0 6px 14px var(--shadow-color);
 }
+.control-btn.primary:hover {
+    background-color: var(--primary-600);
+}
+
 
 /* 播放进度条样式 */
 .player-timeline {
@@ -324,6 +326,7 @@ body {
     border-radius: 2px;
     cursor: pointer;
     position: relative;
+    transition: height 0.2s ease;
 }
 
 .progress-bar:hover {
@@ -379,14 +382,15 @@ body {
 /* 队列侧边栏样式 */
 .queue-sidebar {
     position: fixed;
-    top: 70px;
-    right: -300px;
+    top: 84px; /* 匹配导航栏高度 */
+    right: -320px;
     width: 300px;
-    height: calc(100vh - 170px);
+    height: calc(100vh - 184px); /* 减去导航栏和播放器高度 */
     background-color: var(--nav-bg);
     transition: right 0.3s ease;
     z-index: 999;
-    box-shadow: -2px 0 10px rgba(0,0,0,0.3);
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    border-radius: 12px 0 0 12px;
 }
 
 .queue-sidebar.active {
@@ -400,6 +404,12 @@ body {
     align-items: center;
     border-bottom: 1px solid var(--hover-bg);
 }
+.queue-header button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
 
 .queue-list {
     list-style: none;
@@ -410,6 +420,7 @@ body {
 
 .queue-item {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     padding: 0.5rem;
     border-radius: 4px;
@@ -425,36 +436,40 @@ body {
 .queue-item.active {
     background-color: var(--hover-bg);
     color: var(--primary-color);
+    font-weight: 600;
+}
+.queue-item button {
+    color: var(--text-secondary);
 }
 
 /* 按钮样式 */
 .btn-primary {
     background-color: var(--primary-color);
-    color: var(--text-primary);
+    color: #fff;
     border: none;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 20px;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 12px var(--shadow-color);
 }
 
 .btn-primary:hover {
     transform: scale(1.05);
-    background-color: #1ed760;
+    background-color: var(--primary-600);
 }
 
 /* 搜索框样式 */
 .search-box {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 1rem;
 }
 
 #search-input {
     flex: 1;
     padding: 0.8rem 1rem;
-    border: none;
+    border: 1px solid var(--hover-bg);
     border-radius: 20px;
     background-color: rgba(255,245,248,0.9);
     color: var(--text-primary);
@@ -463,7 +478,14 @@ body {
 
 #search-input:focus {
     outline: none;
-    box-shadow: 0 8px 20px var(--shadow-color);
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+.search-box button {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    cursor: pointer;
 }
 
 /* 上传列表样式 */
@@ -479,7 +501,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border: 1px solid var(--hover-bg);
 }
+.upload-item.success { border-left: 4px solid #4caf50; }
+.upload-item.error { border-left: 4px solid #f44336; }
 
 /* 音乐编辑对话框样式 */
 .music-edit-dialog {
@@ -488,11 +513,12 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.6);
     display: none;
     justify-content: center;
     align-items: center;
     z-index: 2000;
+    backdrop-filter: blur(5px);
 }
 
 .music-edit-dialog.active {
@@ -506,6 +532,7 @@ body {
     width: 90%;
     max-width: 420px;
     box-shadow: 0 12px 30px var(--shadow-color);
+    animation: fadeIn 0.3s;
 }
 
 .dialog-content h3 {
@@ -514,7 +541,7 @@ body {
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .form-group label {
@@ -549,7 +576,7 @@ body {
     background-color: var(--hover-bg);
     color: var(--text-primary);
     border: none;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 20px;
     cursor: pointer;
     font-weight: 600;
@@ -557,7 +584,7 @@ body {
 }
 
 .btn-secondary:hover {
-    background-color: var(--card-bg);
+    background-color: var(--accent-color);
 }
 
 .upload-progress {
@@ -575,32 +602,11 @@ body {
     transition: width 0.3s ease;
 }
 
-/* 播放列表样式 */
-.playlist-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.playlist-card {
-    background-color: var(--card-bg);
-    padding: 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.playlist-card:hover {
-    background-color: var(--hover-bg);
-    transform: translateY(-5px);
-}
 
 /* 动画 */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 /* 响应式设计 */
@@ -623,6 +629,11 @@ body {
         position: relative;
         top: 0;
         padding: 0;
+        order: -1; /* 将进度条移到最上面 */
+    }
+    
+    .now-playing, .player-options {
+        display: none; /* 在小屏幕上隐藏不重要的元素 */
     }
 
     .queue-sidebar {
