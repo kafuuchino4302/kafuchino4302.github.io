@@ -470,7 +470,7 @@ saveEditBtn.addEventListener('click', async () => {
 
         // 2. 更新 music.json
         const { content, sha } = await getMusicJsonContent();
-        const musicJson = JSON.parse(atob(content));
+        const musicJson = JSON.parse(decodeURIComponent(escape(atob(content))));
 
         const newSong = {
             id: fileName, // 使用带时间戳的文件名作为唯一ID
@@ -580,3 +580,4 @@ closeQueueBtn.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
     loadMusicLibrary();
 });
+
