@@ -13,7 +13,7 @@ class MusicPlayer {
         this.github = new GitHubAPI(
             'kafuuchino4302',  // 替换为你的GitHub用户名
             'kafuchino4302.github.io',        // 替换为你的仓库名
-            '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'      // 替换为你的GitHub Token
+            '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'      // 替换为你的GitHub Token
         );
 
         // 添加对话框相关元素
@@ -610,3 +610,4 @@ document.addEventListener('DOMContentLoaded', () => {
     player = new MusicPlayer();
 
 });
+
