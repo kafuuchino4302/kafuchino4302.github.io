@@ -19,7 +19,6 @@
         <div class="nav-menu">
             <a href="#home" class="active"><i class="fas fa-home"></i> 首页</a>
             <a href="#library"><i class="fas fa-folder"></i> 音乐库</a>
-            <a href="#charts"><i class="fas fa-star"></i> 歌单</a>
             <a href="#upload"><i class="fas fa-upload"></i> 上传</a>
             <a href="#playlists"><i class="fas fa-list"></i> 播放列表</a>
         </div>
@@ -34,7 +33,7 @@
                     <!-- 最近上传的音乐将在这里动态显示 -->
                 </div>
             </div>
-            
+
             <div class="quick-playlists">
                 <h2>快速播放列表</h2>
                 <div class="playlist-grid" id="quick-playlists">
@@ -49,7 +48,7 @@
                 <h2>Galgame Music</h2>
                 <div class="library-controls">
                     <div class="search-box">
-                        <input type="text" id="search-input" placeholder="搜索歌曲、歌手、原作...">
+                        <input type="text" id="search-input" placeholder="搜索音乐...">
                         <button id="search-btn"><i class="fas fa-search"></i></button>
                     </div>
                     <div class="view-options">
@@ -64,19 +63,6 @@
             </div>
             <div class="music-container grid-view" id="music-library">
                 <!-- 音乐列表将在这里动态显示 -->
-            </div>
-        </section>
-        
-        <!-- 公共歌单部分 -->
-        <section id="charts" class="section">
-            <div class="playlists-header">
-                <h2>公共歌单</h2>
-                <button id="create-songlist-btn" class="btn-primary">
-                    <i class="fas fa-plus"></i> 新建公共歌单
-                </button>
-            </div>
-            <div class="playlists-grid" id="charts-container">
-                <!-- 公共歌单将在这里动态显示 -->
             </div>
         </section>
 
@@ -121,20 +107,20 @@
             </div>
         </section>
 
-        <!-- 个人播放列表部分 -->
+        <!-- 播放列表部分 -->
         <section id="playlists" class="section">
             <div class="playlists-header">
-                <h2>我的播放列表</h2>
+                <h2>播放列表</h2>
                 <button id="create-playlist-btn" class="btn-primary">
                     <i class="fas fa-plus"></i> 新建播放列表
                 </button>
             </div>
             <div class="playlists-grid" id="playlists-container">
-                <!-- 个人播放列表将在这里动态显示 -->
+                <!-- 播放列表将在这里动态显示 -->
             </div>
         </section>
 
-        <!-- 播放列表详情页 -->
+        <!-- 新增: 播放列表详情页 -->
         <section id="playlist-detail" class="section">
             <div class="playlist-detail-header">
                 <button id="back-to-playlists-btn" class="back-btn"><i class="fas fa-arrow-left"></i> 返回</button>
@@ -189,12 +175,12 @@
         </ul>
     </div>
 
-    <!-- 添加到播放列表的模态框 -->
+    <!-- 新增: 添加到播放列表的模态框 -->
     <div class="modal-overlay" id="add-to-playlist-modal">
         <div class="modal-content">
-            <h3>添加到列表</h3>
+            <h3>添加到播放列表</h3>
             <ul class="modal-playlist-list" id="modal-playlist-list">
-                <!-- 可用的播放列表和歌单将在这里显示 -->
+                <!-- 可用的播放列表将在这里显示 -->
             </ul>
             <div class="modal-actions">
                 <button id="close-modal-btn" class="btn-secondary">关闭</button>
