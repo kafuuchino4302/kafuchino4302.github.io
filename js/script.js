@@ -26,6 +26,28 @@ const TOKEN_PART1 = 'ghp_pOaD2xShfdDnW6g2';
 const TOKEN_PART2 = 'zt8IIA6injrCOj2JDzRz';
 const GITHUB_TOKEN = TOKEN_PART1 + TOKEN_PART2;
 
+function utf8ToBase64(str) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(str);
+    // btoa can't handle Uint8Array directly, so we need to convert it to a binary string.
+    let binaryString = '';
+    data.forEach((byte) => {
+        binaryString += String.fromCharCode(byte);
+    });
+    return btoa(binaryString);
+}
+
+// Helper function to correctly decode a Base64 string to UTF-8
+function base64ToUtf8(str) {
+    const binaryString = atob(str);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    const decoder = new TextDecoder('utf-8');
+    return decoder.decode(bytes);
+}
+
 // --- DOM 元素 ---
 const dropZone = document.getElementById('drop-zone');
 const fileInput = document.getElementById('file-input');
@@ -483,7 +505,7 @@ async function updateMusicJson(newSong) {
     try {
         const response = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } });
         const data = await response.json();
-        const content = atob(data.content);
+        const content = base64ToUtf8(data.content);
         let musicList = JSON.parse(content);
 
         // 确保 musicList 是一个数组
@@ -491,8 +513,7 @@ async function updateMusicJson(newSong) {
 
         musicList.unshift(newSong); // 添加到最前面
 
-        const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(musicList, null, 2))));
-        
+        const updatedContent = utf8ToBase64(JSON.stringify(musicList, null, 2));
         await fetch(url, {
             method: 'PUT',
             headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
@@ -521,7 +542,7 @@ async function updateGitHubFile(path, content, commitMessage) {
         } else if (response.status !== 404) {
             throw new Error(`获取文件 SHA 失败: ${response.statusText}`);
         }
-        const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2))));
+        const contentEncoded = utf8ToBase64(JSON.stringify(content, null, 2));
         const updateResponse = await fetch(url, {
             method: 'PUT',
             headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
@@ -900,3 +921,4 @@ document.addEventListener('DOMContentLoaded', () => {
     displayPlaylists();
     loadPublicSonglists();
 });
+
