@@ -531,7 +531,7 @@ async function updateMusicJson(newSong) {
         if (!Array.isArray(musicList)) musicList = [];
         musicList.unshift(newSong);
 
-        const updatedContent = utf8ToBase64(JSON.stringify(musicList, null, 2));
+        const updatedContent = utf8ToBase64(JSON.stringify(musicList));
         
         await fetch(url, {
             method: 'PUT',
@@ -561,7 +561,7 @@ async function updateGitHubFile(path, content, commitMessage) {
         } else if (response.status !== 404) {
             throw new Error(`获取文件 SHA 失败: ${response.statusText}`);
         }
-        const contentEncoded = utf8ToBase64(JSON.stringify(content, null, 2));
+        const contentEncoded = utf8ToBase64(JSON.stringify(content));
         const updateResponse = await fetch(url, {
             method: 'PUT',
             headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
@@ -935,4 +935,5 @@ document.addEventListener('DOMContentLoaded', () => {
     displayPlaylists();
     loadPublicSonglists();
 });
+
 
