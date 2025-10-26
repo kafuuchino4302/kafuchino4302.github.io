@@ -156,23 +156,24 @@ body {
     display: block;
 }
 
-/* 音乐网格样式 */
-.music-grid {
+/* --- 音乐网格样式 (优化版，更紧凑) --- */
+.music-grid, .music-container.grid-view {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
+    /* 从200px减小，允许更多卡片并排 */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+    gap: 0.8rem; /* 减小卡片间距 */
     margin-top: 1rem;
 }
 
 .music-card {
     background: linear-gradient(180deg, #fff 0%, #fffaf6 100%);
-    padding: 1rem;
-    border-radius: 14px;
+    padding: 0.8rem; /* 减小内边距 */
+    border-radius: 12px; /* 配合更小的卡片，减小圆角 */
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 6px 18px var(--shadow-color);
+    box-shadow: 0 4px 12px var(--shadow-color); /* 阴影稍微收敛 */
     border: 1px solid rgba(255,200,220,0.25);
     display: flex;
     flex-direction: column;
@@ -180,7 +181,8 @@ body {
 }
 
 .music-card:hover {
-    transform: translateY(-6px) scale(1.01);
+    transform: translateY(-5px); /* 悬浮效果微调 */
+    box-shadow: 0 6px 18px var(--shadow-color);
 }
 
 .music-card:hover .music-card-controls {
@@ -188,12 +190,28 @@ body {
 }
 
 .music-card-info {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem; /* 减小信息区和控制区的距离 */
 }
+
 .music-card-info h3 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    font-size: 1rem; /* 减小标题字体 */
+    margin-bottom: 0.3rem; /* 减小标题和歌手的间距 */
+    /* 防止长标题换行 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+/* 调整歌手和原作信息的字体与间距 */
+.singer-info {
+    font-size: 0.85rem;
+    margin-top: 0;
+}
+.original-work {
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+}
+
 
 .music-card-controls {
     display: flex;
@@ -201,7 +219,15 @@ body {
     align-items: center;
     opacity: 0;
     transition: opacity 0.25s ease;
-    padding-top: 0.5rem;
+    padding-top: 0.3rem;
+}
+
+/* 特别为卡片内的控制按钮设置更小的尺寸 */
+.music-card .control-btn {
+    font-size: 1rem;   /* 减小图标大小 */
+    padding: 0.3rem;   /* 减小按钮内边距 */
+    width: 28px;       /* 固定按钮宽高 */
+    height: 28px;
 }
 
 /* 上传区域样式 */
@@ -903,3 +929,4 @@ body {
     display: flex;
     justify-content: flex-end;
 }
+
