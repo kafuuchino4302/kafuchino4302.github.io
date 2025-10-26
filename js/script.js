@@ -50,6 +50,8 @@ const volume = document.getElementById('volume');
 const currentTitle = document.getElementById('current-title');
 const currentArtist = document.getElementById('current-artist');
 const queueBtn = document.getElementById('queue');
+const searchInput = document.getElementById('search-input');
+const searchBtn = document.getElementById('search-btn');
 
 // --- 播放列表相关的 DOM 元素 ---
 const createPlaylistBtn = document.getElementById('create-playlist-btn');
@@ -87,7 +89,54 @@ navLinks.forEach(link => {
     });
 });
 
+// --- 搜索功能 ---
 
+function performSearch() {
+    // 1. 获取用户输入的搜索词，并转换为小写以便不区分大小写匹配
+    const searchTerm = searchInput.value.toLowerCase().trim();
+
+    // 2. 如果搜索词为空，则显示完整的音乐库
+    if (!searchTerm) {
+        displayMusic(musicDatabase);
+        return;
+    }
+
+    // 3. 过滤 musicDatabase 数组
+    const filteredMusic = musicDatabase.filter(song => {
+        // 将歌曲信息也转换为小写
+        const title = song.title.toLowerCase();
+        const original = song.original ? song.original.toLowerCase() : '';
+        // 将歌手数组连接成一个字符串再搜索
+        const singers = Array.isArray(song.singers) ? song.singers.join(' ').toLowerCase() : '';
+
+        // 检查歌曲的标题、原作或歌手中是否包含搜索词
+        return title.includes(searchTerm) || 
+               original.includes(searchTerm) || 
+               singers.includes(searchTerm);
+    });
+
+    // 4. 使用过滤后的结果重新渲染音乐库
+    if (filteredMusic.length > 0) {
+        displayMusic(filteredMusic);
+    } else {
+        // 如果没有搜索结果，显示提示信息
+        musicLibrary.innerHTML = '<p style="text-align: center; color: var(--text-secondary); margin-top: 2rem;">未找到匹配的音乐。</p>';
+    }
+}
+
+// --- 事件监听 ---
+// 1. 当用户在搜索框中输入时，立即执行搜索 (实时搜索)
+searchInput.addEventListener('input', performSearch);
+
+// 2. 当用户点击搜索按钮时，也执行搜索
+searchBtn.addEventListener('click', performSearch);
+
+// 3. (可选) 当用户在搜索框中按回车键时，也执行搜索
+searchInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') {
+        performSearch();
+    }
+});
 // --- 核心音乐功能 ---
 
 async function loadMusicLibrary() {
@@ -477,3 +526,4 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMusicLibrary();
     displayPlaylists();
 });
+
