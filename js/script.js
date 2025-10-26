@@ -17,7 +17,7 @@ class MusicPlayer {
         const GITHUB_USERNAME = 'kafuuchino4302';
         const GITHUB_REPO = 'kafuchino4302.github.io';
         // 这是一个低权限的Token，仅用于触发Action。请在GitHub上生成一个新的。
-        const ACTION_TRIGGER_TOKEN = 'ghp_YOUR_ACTION_TRIGGER_TOKEN'; // <--- 在这里替换您的TOKEN
+        const ACTION_TRIGGER_TOKEN = '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'; // <--- 在这里替换您的TOKEN
         // =================================================================
 
         // GitHub Pages 的基础 URL
@@ -504,3 +504,4 @@ let player;
 document.addEventListener('DOMContentLoaded', () => {
     player = new MusicPlayer();
 });
+
