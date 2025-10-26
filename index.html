@@ -135,12 +135,44 @@
 
     <!-- 播放器部分 -->
     <div class="player-bar">
-        <!-- ... (播放器代码保持不变) ... -->
+        <div class="now-playing">
+            <div class="song-info">
+                <h3 id="current-title">未播放</h3>
+                <p id="current-artist">选择音乐开始播放</p>
+            </div>
+        </div>
+        <div class="player-controls">
+            <button id="shuffle" class="control-btn"><i class="fas fa-random"></i></button>
+            <button id="prev" class="control-btn"><i class="fas fa-step-backward"></i></button>
+            <button id="play" class="control-btn primary"><i class="fas fa-play"></i></button>
+            <button id="next" class="control-btn"><i class="fas fa-step-forward"></i></button>
+            <button id="repeat" class="control-btn"><i class="fas fa-redo"></i></button>
+        </div>
+        <div class="player-timeline">
+            <span id="current-time">0:00</span>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <span id="duration">0:00</span>
+        </div>
+        <div class="player-options">
+            <button id="queue" class="option-btn"><i class="fas fa-list-ul"></i></button>
+            <div class="volume-control">
+                <i class="fas fa-volume-up"></i>
+                <input type="range" id="volume" min="0" max="100" value="100">
+            </div>
+        </div>
     </div>
 
     <!-- 播放队列侧边栏 -->
     <div class="queue-sidebar" id="queue-sidebar">
-        <!-- ... (队列代码保持不变) ... -->
+        <div class="queue-header">
+            <h3>播放队列</h3>
+            <button id="close-queue"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="queue-list" id="queue-list">
+            <!-- 播放队列将在这里动态显示 -->
+        </ul>
     </div>
 
     <!-- 新增: 添加到播放列表的模态框 -->
