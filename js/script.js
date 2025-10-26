@@ -1,8 +1,8 @@
 // js/script.js
 
 // GitHub 配置
-const GITHUB_OWNER = '你的GitHub用户名'; // 替换为你的 GitHub 用户名
-const GITHUB_REPO = '你的仓库名'; // 替换为你的仓库名
+const GITHUB_OWNER = 'kafuchino4302'; // 替换为你的 GitHub 用户名
+const GITHUB_REPO = 'kafuchino4302.github.io'; // 替换为你的仓库名
 const TOKEN_PART_1 =' ghp_pOaD2xShfdDnW6g2z'; // 硬编码部分 token（前半部分，替换为你的部分 token）
 const MUSIC_DIR = 'music/'; // 音乐文件存储目录
 const METADATA_FILE = 'music.json'; // 元数据文件
@@ -274,3 +274,4 @@ function playSong(song) {
 }
 
 // 其他功能（addToQueue、updateQueue、togglePlay 等）与原代码相同，省略
+
