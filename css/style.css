@@ -708,3 +708,198 @@ body {
 .playlist-controls .play-playlist-btn {
     color: var(--primary-color);
 }
+/* --- 新增样式：播放列表 --- */
+
+.playlists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.playlist-card {
+    background: var(--card-bg);
+    padding: 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    border: 1px solid var(--hover-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.playlist-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px var(--shadow-color);
+}
+
+.playlist-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+}
+
+.playlist-info p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.playlist-controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.playlist-controls button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.playlist-controls button:hover {
+    color: var(--text-primary);
+    background-color: var(--hover-bg);
+}
+
+.playlist-controls .play-playlist-btn {
+    color: var(--primary-color);
+}
+
+/* --- 新增样式: 播放列表详情页 --- */
+.playlist-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.back-btn {
+    background: none;
+    border: 1px solid var(--hover-bg);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+}
+
+.playlist-song-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.playlist-song-item {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--hover-bg);
+    transition: background-color 0.2s ease;
+}
+
+.playlist-song-item:hover {
+    background-color: var(--hover-bg);
+}
+
+.playlist-song-item .play-btn-small {
+    background: none; border: none; cursor: pointer; color: var(--text-secondary); font-size: 1rem;
+}
+.playlist-song-item .song-details {
+    display: flex;
+    flex-direction: column;
+}
+.playlist-song-item .song-details .title { font-weight: 600; }
+.playlist-song-item .song-details .artist { font-size: 0.9rem; color: var(--text-secondary); }
+
+.playlist-song-item .remove-song-btn {
+    background: none; border: none; cursor: pointer; color: #ff6b6b; font-size: 1.1rem;
+    opacity: 0.5; transition: opacity 0.2s ease;
+}
+.playlist-song-item:hover .remove-song-btn {
+    opacity: 1;
+}
+
+
+/* --- 新增样式: 添加到播放列表模态框 --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none; /* Changed from flex */
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+    backdrop-filter: blur(5px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 380px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+
+.modal-content h3 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.modal-playlist-list {
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 1.5rem;
+}
+
+.modal-playlist-list li {
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+}
+
+.modal-playlist-list li:hover {
+    background-color: var(--hover-bg);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+}
