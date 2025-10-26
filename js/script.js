@@ -14,7 +14,6 @@ const GITHUB_OWNER = 'kafuuchino4302';
 const GITHUB_REPO = 'kafuchino4302.github.io';
 const MUSIC_JSON_PATH = 'music.json';
 const MUSIC_FOLDER = 'music/';
-// 使用 jsdelivr CDN 加速访问，并自动处理缓存
 const RAW_JSON_URL = 'music.json';
 
 // GitHub Personal Access Token（分割法）
@@ -51,6 +50,11 @@ const volume = document.getElementById('volume');
 const currentTitle = document.getElementById('current-title');
 const currentArtist = document.getElementById('current-artist');
 const queueBtn = document.getElementById('queue');
+
+// --- 新增: 播放列表相关的 DOM 元素 ---
+const createPlaylistBtn = document.getElementById('create-playlist');
+const playlistsContainer = document.getElementById('playlists-container');
+
 
 // --- 导航切换逻辑 ---
 const navLinks = document.querySelectorAll('.nav-menu a');
@@ -320,7 +324,7 @@ function formatTime(seconds) {
 }
 
 // --- 上传逻辑 ---
-
+// (此部分代码保持不变)
 dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
 dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
 dropZone.addEventListener('drop', (e) => {
@@ -378,7 +382,6 @@ cancelEditBtn.addEventListener('click', () => {
     currentFile = null;
 });
 
-// 保存并上传 (最终版本)
 saveEditBtn.addEventListener('click', async () => {
     const title = editTitle.value.trim();
     const original = editOriginal.value.trim();
@@ -443,7 +446,7 @@ saveEditBtn.addEventListener('click', async () => {
 });
 
 // --- GitHub API 助手函数 ---
-
+// (此部分代码保持不变)
 function readFileAsBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -508,6 +511,90 @@ async function updateMusicJson(musicJson, sha) {
     }
 }
 
+
+// --- 新增: 播放列表功能 ---
+
+// 从 localStorage 获取播放列表
+function getPlaylists() {
+    return JSON.parse(localStorage.getItem('galgame_playlists')) || [];
+}
+
+// 保存播放列表到 localStorage
+function savePlaylists(playlists) {
+    localStorage.setItem('galgame_playlists', JSON.stringify(playlists));
+}
+
+// 显示所有播放列表
+function displayPlaylists() {
+    playlistsContainer.innerHTML = '';
+    const playlists = getPlaylists();
+    if (playlists.length === 0) {
+        playlistsContainer.innerHTML = '<p>还没有创建播放列表哦，快来创建一个吧！</p>';
+        return;
+    }
+    playlists.forEach(playlist => {
+        const playlistCard = document.createElement('div');
+        playlistCard.classList.add('playlist-card');
+        playlistCard.dataset.playlistId = playlist.id;
+        playlistCard.innerHTML = `
+            <div class="playlist-info">
+                <h3>${playlist.name}</h3>
+                <p>${playlist.songs.length} 首歌曲</p>
+            </div>
+            <div class="playlist-controls">
+                <button class="play-playlist-btn" title="播放此列表"><i class="fas fa-play-circle"></i></button>
+                <button class="delete-playlist-btn" title="删除此列表"><i class="fas fa-trash-alt"></i></button>
+            </div>
+        `;
+        playlistsContainer.appendChild(playlistCard);
+    });
+}
+
+// "新建播放列表" 按钮的点击事件
+createPlaylistBtn.addEventListener('click', () => {
+    const playlistName = prompt('请输入新播放列表的名称:');
+    if (playlistName && playlistName.trim() !== '') {
+        const playlists = getPlaylists();
+        // 检查是否存在同名播放列表
+        if (playlists.some(p => p.name === playlistName.trim())) {
+            alert('该名称的播放列表已存在！');
+            return;
+        }
+        // 创建新播放列表对象
+        const newPlaylist = {
+            id: Date.now(), // 使用时间戳作为唯一ID
+            name: playlistName.trim(),
+            songs: [] // 初始歌曲为空
+        };
+        playlists.push(newPlaylist);
+        savePlaylists(playlists);
+        displayPlaylists(); // 重新渲染播放列表
+    }
+});
+
+// 使用事件委托处理播放列表卡片上的按钮点击
+playlistsContainer.addEventListener('click', (e) => {
+    const deleteBtn = e.target.closest('.delete-playlist-btn');
+    if (deleteBtn) {
+        const card = deleteBtn.closest('.playlist-card');
+        const playlistId = Number(card.dataset.playlistId);
+        
+        if (confirm('确定要删除这个播放列表吗？')) {
+            let playlists = getPlaylists();
+            playlists = playlists.filter(p => p.id !== playlistId);
+            savePlaylists(playlists);
+            displayPlaylists();
+        }
+    }
+
+    // (未来可以添加播放整个列表的功能)
+    const playBtn = e.target.closest('.play-playlist-btn');
+    if (playBtn) {
+        alert('播放整个列表的功能正在开发中！');
+    }
+});
+
+
 // --- UI 控制 ---
 queueBtn.addEventListener('click', () => queueSidebar.classList.toggle('active'));
 closeQueueBtn.addEventListener('click', () => queueSidebar.classList.remove('active'));
@@ -515,4 +602,5 @@ closeQueueBtn.addEventListener('click', () => queueSidebar.classList.remove('act
 // --- 初始化 ---
 document.addEventListener('DOMContentLoaded', () => {
     loadMusicLibrary();
+    displayPlaylists(); // --- 新增: 页面加载时显示已有的播放列表
 });
