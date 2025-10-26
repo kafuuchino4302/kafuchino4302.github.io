@@ -457,7 +457,7 @@ saveEditBtn.addEventListener('click', async () => {
             title: title,
             singers: singers,
             original: original,
-            url: `https://cdn.jsdelivr.net/gh/${GITHUB_OWNER}/${GITHUB_REPO}@main/${filePath}` // 使用CDN URL
+            url: filePath
         };
         // 修复：确保 musicJson 是一个单层数组
         const targetArray = Array.isArray(musicJson[0]) ? musicJson[0] : musicJson;
@@ -560,4 +560,5 @@ closeQueueBtn.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
     loadMusicLibrary();
 });
+
 
