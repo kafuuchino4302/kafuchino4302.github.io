@@ -1,5 +1,23 @@
 [
   {
+    "id": "Affectation.mp3",
+    "title": "Affectation",
+    "singers": [
+      "in:Lay"
+    ],
+    "original": "1人殺すのも2人殺すのも同じことだと思うから",
+    "url": "music/Affectation.mp3"
+  },
+  {
+    "id": "リユニオン.mp3",
+    "title": "リユニオン",
+    "singers": [
+      "	羽澄愛"
+    ],
+    "original": "黄昏トロイメライ -Twilight with U-",
+    "url": "music/リユニオン.mp3"
+  },
+  {
     "id": "Hello Again.mp3",
     "title": "Hello Again",
     "singers": [
