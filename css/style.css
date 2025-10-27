@@ -712,14 +712,128 @@ h2 {
     to { opacity: 1; transform: scale(1); }
 }
 
-/* 响应式设计 */
+/* --- Mobile Navigation Styles --- */
+.hamburger-menu {
+    display: none; /* Hide by default on desktop */
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.mobile-nav-menu {
+    position: fixed;
+    top: 76px; /* Below navbar */
+    left: 0;
+    width: 100%;
+    background-color: var(--nav-bg);
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+    box-shadow: 0 6px 18px var(--shadow-color);
+    z-index: 999;
+    transform: translateY(-150%);
+    transition: transform 0.3s ease-in-out;
+}
+
+.mobile-nav-menu.active {
+    transform: translateY(0);
+}
+
+.mobile-nav-menu a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mobile-nav-menu a:hover,
+.mobile-nav-menu a.active {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+}
+
+
+/* --- 响应式设计 --- */
 @media (max-width: 768px) {
-    .nav-menu { display: none; }
-    .main-container { padding: 1rem; }
-    .player-bar { grid-template-columns: 1fr; gap: 0.5rem; padding: 0.5rem; }
-    .player-timeline { position: relative; top: 0; padding: 0; order: -1; }
-    .now-playing, .player-options { display: none; }
-    .queue-sidebar { width: 100%; right: -100%; }
+    .nav-menu { 
+        display: none; /* Hide desktop menu */
+    }
+    
+    .hamburger-menu {
+        display: block; /* Show hamburger menu */
+    }
+
+    .main-container { 
+        padding: 1.5rem 1rem; /* Reduce padding on mobile */
+        margin-top: 76px;
+        margin-bottom: 120px; /* More space for taller player bar */
+    }
+    
+    .player-bar { 
+        grid-template-columns: 1fr; /* Stack player elements */
+        gap: 0.5rem; 
+        padding: 0.75rem 1rem; 
+        height: 120px; /* Adjust height for new layout */
+        box-sizing: border-box;
+    }
+
+    .player-timeline { 
+        position: relative; 
+        top: 0; 
+        padding: 0; 
+        order: -1; /* Move timeline to the top */
+        width: 100%;
+    }
+
+    .now-playing, .player-options { 
+        display: none; /* Hide song info and volume on mobile */
+    }
+    
+    .player-controls {
+        gap: 0.5rem; /* Reduce gap between controls */
+    }
+
+    .queue-sidebar { 
+        width: 100%; /* Full width sidebar */
+        right: -100%; 
+        border-radius: 0;
+        top: 0;
+        height: 100%;
+    }
+    .queue-sidebar.active {
+        right: 0;
+    }
+    
+    .music-grid, .music-container.grid-view {
+        /* Better 2-column layout on small phones */
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+    }
+    
+    .playlists-grid {
+        grid-template-columns: 1fr; /* Single column for playlists */
+    }
+    
+    .library-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        max-width: none;
+    }
+    
+    .playlist-detail-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
 }
 
 .modal-list-header {
