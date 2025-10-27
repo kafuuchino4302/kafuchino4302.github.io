@@ -95,6 +95,12 @@ const songlistSongListContainer = document.getElementById('songlist-song-list-co
 const backToSonglistsBtn = document.getElementById('back-to-songlists-btn');
 const playAllInSonglistDetailBtn = document.getElementById('play-all-in-songlist-detail-btn');
 
+// --- Mobile Navigation DOM Elements ---
+const hamburgerMenu = document.getElementById('hamburger-menu');
+const mobileNavMenu = document.getElementById('mobile-nav-menu');
+const mobileNavLinks = document.querySelectorAll('.mobile-nav-menu a');
+
+
 // --- 导航与页面切换 ---
 const navLinks = document.querySelectorAll('.nav-menu a');
 const sections = document.querySelectorAll('.main-container .section');
@@ -102,9 +108,15 @@ const sections = document.querySelectorAll('.main-container .section');
 function switchToSection(targetId) {
     const targetSection = document.getElementById(targetId);
     if (targetSection) {
+        // Update both desktop and mobile links
         navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${targetId}`));
+        mobileNavLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${targetId}`));
+        
         sections.forEach(s => s.classList.remove('active'));
         targetSection.classList.add('active');
+
+        // --- Close mobile menu after navigation ---
+        mobileNavMenu.classList.remove('active');
     }
 }
 
@@ -115,6 +127,20 @@ navLinks.forEach(link => {
         switchToSection(targetId);
     });
 });
+
+// --- Mobile navigation logic ---
+mobileNavLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').substring(1);
+        switchToSection(targetId);
+    });
+});
+
+hamburgerMenu.addEventListener('click', () => {
+    mobileNavMenu.classList.toggle('active');
+});
+
 
 // --- 搜索功能 ---
 function performSearch() {
@@ -935,6 +961,3 @@ document.addEventListener('DOMContentLoaded', () => {
     displayPlaylists();
     loadPublicSonglists();
 });
-
-
-
