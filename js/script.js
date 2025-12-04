@@ -317,8 +317,37 @@ function playSongFromQueue() {
         return;
     }
     const song = currentPlaylist[currentIndex];
-    audio.src = song.url;
-    audio.play();
+    
+    // --- 修改开始: 判断并生成 URL ---
+    let songUrl = '';
+    if (song.ncm_id) {
+        // 使用网易云官方外链地址
+        songUrl = `https://music.163.com/song/media/outer/url?id=${song.ncm_id}.mp3`;
+    } else {
+        // 本地 GitHub 文件
+        songUrl = song.url; 
+    }
+    audio.src = songUrl;
+    // --- 修改结束 ---
+
+    // 某些浏览器在切换外链时可能需要重新加载
+    audio.load();
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+        playPromise.then(_ => {
+            // 播放成功
+        })
+        .catch(error => {
+            console.error("播放失败:", error);
+            // 这里可以处理网易云版权歌曲无法播放的情况（外链会失效）
+            if(song.ncm_id) {
+                alert(`无法播放 "${song.title}"。可能是因为网易云版权限制 (VIP歌曲) 或歌曲已下架。`);
+                playNext(); // 自动跳下一首
+            }
+        });
+    }
+
     isPlaying = true;
     playBtn.querySelector('i').classList.replace('fa-play', 'fa-pause');
     updatePlayerInfo(song);
@@ -955,6 +984,70 @@ modalPlaylistList.addEventListener('click', async e => {
 // --- UI 控制 & 初始化 ---
 queueBtn.addEventListener('click', () => queueSidebar.classList.toggle('active'));
 closeQueueBtn.addEventListener('click', () => queueSidebar.classList.remove('active'));
+
+// --- 网易云音乐添加逻辑 ---
+
+// 标签切换
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // 移除所有激活状态
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(c => c.style.display = 'none');
+        
+        // 激活当前点击的
+        btn.classList.add('active');
+        const targetId = `tab-${btn.dataset.tab}`;
+        document.getElementById(targetId).style.display = 'block';
+    });
+});
+
+// 处理添加按钮点击
+const addNcmBtn = document.getElementById('add-ncm-btn');
+addNcmBtn.addEventListener('click', async () => {
+    const ncmId = document.getElementById('ncm-id-input').value.trim();
+    const title = document.getElementById('ncm-title').value.trim();
+    const singer = document.getElementById('ncm-singer').value.trim();
+    const original = document.getElementById('ncm-original').value.trim();
+
+    if (!ncmId || !title || !singer) {
+        alert('请至少填写 ID、歌曲名称和歌手。');
+        return;
+    }
+
+    // 创建新的歌曲对象结构
+    // 注意：这里我们使用 ncm_id 字段，不使用 url 字段
+    const newSong = {
+        id: `ncm_${ncmId}`, // 给个唯一ID
+        title: title,
+        singers: [singer], // 保持数组格式一致性
+        original: original || '网易云音乐',
+        ncm_id: ncmId // 关键字段
+    };
+
+    // 显示加载状态
+    addNcmBtn.disabled = true;
+    addNcmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在添加...';
+    
+    try {
+        await updateMusicJson(newSong);
+        
+        // 清空输入框
+        document.getElementById('ncm-id-input').value = '';
+        document.getElementById('ncm-title').value = '';
+        document.getElementById('ncm-singer').value = '';
+        document.getElementById('ncm-original').value = '';
+        
+        alert('网易云歌曲添加成功！');
+    } catch (error) {
+        alert('添加失败: ' + error.message);
+    } finally {
+        addNcmBtn.disabled = false;
+        addNcmBtn.innerHTML = '<i class="fas fa-plus"></i> 添加到库';
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     loadMusicLibrary();

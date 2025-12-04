@@ -83,14 +83,44 @@
         <!-- 上传部分 -->
         <section id="upload" class="section">
             <div class="upload-container">
-                <h2>上传音乐</h2>
-                <div class="upload-area" id="drop-zone">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>拖拽音乐文件到这里或点击上传</p>
-                    <input type="file" id="file-input" accept="audio/*" multiple hidden>
+                <h2>添加音乐</h2>
+                <div class="upload-tabs">
+                    <button class="tab-btn active" data-tab="local">本地上传</button>
+                    <button class="tab-btn" data-tab="ncm">网易云音乐</button>
+                </div>
+                <div id="tab-local" class="tab-content active">
+                    <div class="upload-area" id="drop-zone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>拖拽音乐文件到这里或点击上传</p>
+                        <input type="file" id="file-input" accept="audio/*" multiple hidden>
+                    </div>
+                </div>
+                <div id="tab-ncm" class="tab-content" style="display: none;">
+                    <div class="ncm-input-container">
+                        <div class="form-group">
+                            <label>网易云音乐 ID (例如: 123456)</label>
+                            <input type="number" id="ncm-id-input" placeholder="输入歌曲ID">
+                            <small style="color: var(--text-secondary);">在网易云链接中找到 id=xxxxxx</small>
+                        </div>
+                        <div class="form-group">
+                            <label>歌曲名称</label>
+                            <input type="text" id="ncm-title" placeholder="输入歌曲名称">
+                        </div>
+                        <div class="form-group">
+                            <label>歌手</label>
+                            <input type="text" id="ncm-singer" placeholder="输入歌手名称">
+                        </div>
+                        <div class="form-group">
+                            <label>原作/来源</label>
+                            <input type="text" id="ncm-original" placeholder="输入原作名称">
+                        </div>
+                        <button id="add-ncm-btn" class="btn-primary" style="width: 100%; margin-top: 1rem;">
+                            <i class="fas fa-plus"></i> 添加到库
+                        </button>
+                    </div>
                 </div>
                 <div class="upload-list" id="upload-list">
-                    <!-- 上传列表将在这里显示 -->
+                    <!-- 上传列表显示 -->
                 </div>
             </div>
 
